@@ -12,16 +12,6 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
 
     cat_list = []
 
-    # # 针对 coco 数据集
-    # classes_list = [str(i) for i in range(91)]
-    # for cla in classes:
-    #     cla_id, cla_label = cla.rstrip("\n").split("-")
-    #     cla_id = int(cla_id)
-    #     classes_list[cla_id] = cla_label
-    #     cat_list.append({"id": cla_id,
-    #                       "name": cla_label,
-    #                       "supercategory": ""})
-
     # 针对自定义数据集
     for cla_id, cla in enumerate(classes):
         cla_name = cla.rstrip("\n")
@@ -29,11 +19,7 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
                           "name": cla_name,
                           "supercategory": ""})
 
-
-
     # 迭代 yolo 的 txt 文件
-    success = 0
-    img_id = 1
     anno_id = 1
     img_list = []
     anno_list = []
@@ -45,6 +31,7 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
         # print(f"img_file: {img_file} \t txt_file: {txt_file}")
 
         imgs = Image.open(imgpath)
+        img_id = int(img_file.split(".")[0].split("_")[-1])
         img_w, img_h = imgs.size
 
         img_list.append({"id": img_id,
@@ -53,12 +40,10 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
                          "file_name": img_file})
 
         try:
-            success += 1
             with open(txtpath, "r", encoding="utf8") as fp:
                 # 获取文件内容
                 txtcontent = fp.readlines()
         except:
-            img_id += 1
             continue
 
         for line in txtcontent:
@@ -87,8 +72,6 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
                            "iscrowd": 0})
             
             anno_id += 1
-        
-        img_id += 1
 
     cocoset = {"info": {},
                 "flags": {},
@@ -102,7 +85,6 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
 
     with open(save_file, "w", encoding="utf8") as wp:
         json.dump(cocoset, wp, indent=2)
-    print("success:", anno_id)
 
 
 if __name__ == "__main__":
