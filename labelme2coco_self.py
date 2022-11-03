@@ -23,16 +23,17 @@ def labelme2coco(labelme_path, classes_file, save_file):
     annos_list = []
 
     labelme_file_list = sorted(os.listdir(labelme_path))
-    for img_id, labelmefile in enumerate(tqdm(labelme_file_list)):
+    for labelmefile in tqdm(labelme_file_list):
         laabelmepath = os.path.join(labelme_path, labelmefile)
         with open(laabelmepath, "r", encoding="utf8") as jf:
             labelmedata = json.load(jf)
 
         img_name = os.path.basename(labelmedata["imagePath"])
+        img_id = int(img_name.split(".")[0].split("_")[-1])
         img_width = labelmedata["imageWidth"]
         img_height = labelmedata["imageHeight"]
 
-        imgs_list.append({"id": img_id+1,
+        imgs_list.append({"id": img_id,
                           "width": img_width,
                           "height": img_height,
                           "file_name": img_name, })
@@ -48,7 +49,7 @@ def labelme2coco(labelme_path, classes_file, save_file):
             coco_area = coco_w*coco_h
 
             annos_list.append({"id": anno_id+1,
-                               "image_id": img_id+1,
+                               "image_id": img_id,
                                "category_id": cat_id,
                                "segmentation": [x1, y1, x2, y1, x2, y2, x1, y2],
                                "area": coco_area,
