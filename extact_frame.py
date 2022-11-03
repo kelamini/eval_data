@@ -54,14 +54,14 @@ def video_ext_frame(path, savepath, numframe=50):
 
 
 if __name__ == "__main__":
-    
     parser = argparse.ArgumentParser(description="")
-    parser.add_argument("-v", "--videopath", type=str, default="./video", help="")
-    parser.add_argument("-s", "--savepath", type=str, default="./videoframe", help="")
-    parser.add_argument("-n", "--numframe", type=int, default=50, help="")
+
+    parser.add_argument("-v", "--video_path", type=str, default="./video", help="")
+    parser.add_argument("-s", "--save_path", type=str, default="./videoframe", help="")
+    parser.add_argument("-n", "--num_frame", type=int, default=50, help="")
 
     args = parser.parse_args()
-    videopath = args.videopath
-    savepath = args.savepath
-    numframe = args.numframe
+    videopath = args.video_path
+    savepath = args.save_path
+    numframe = args.num_frame
     video_ext_frame(videopath, savepath, numframe)
