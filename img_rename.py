@@ -2,7 +2,7 @@ import os
 import shutil
 import datetime
 from PIL import Image
-import tqdm
+from tqdm import tqdm
 import argparse
 
 
@@ -14,21 +14,30 @@ def is_image(file_name):
     return False
 
 
-def image_rename(dir_path, cnt=1, work_name="face"):
+def image_rename(dir_path, cnt=1, work_name="FaceDetection"):
     """
     重命名图像名称
     """
-    date = datetime.date.today()
-    strdate = str(date.year) + str(date.month) + str(date.day)
+    save_path = os.path.join(os.path.dirname(dir_path), f"{work_name}_images")
+    if os.path.exists(save_path):
+        shutil.rmtree(save_path)
+    os.mkdir(save_path)
+    print(f"rename images save to: {save_path}")
+
+    date = datetime.date.today()    # 获取当前日期
+    strdate = str(date.year) + str(date.month) + str(date.day)  # 将日期转换为字符串拼接在一起
+    # 遍历图像路径
     for root, dirs, files in os.walk(dir_path):
-        img_files = [file_name for file_name in files if is_image(file_name)]
-        for file in img_files:
-            file_path = os.path.join(root, file)
-            imgs_suffix = str(file).split(".")[-1]
-            rename_file = f"{work_name}_{strdate}_{cnt}.{imgs_suffix}"
-            file_rename_path = os.path.join(root, rename_file)
+        print(f"for: {root}")
+        img_files_list = [file_name for file_name in files if is_image(file_name)]   # 图像的名称列表
+        # 遍历图像
+        for img_file in tqdm(img_files_list):
+            file_path = os.path.join(root, img_file)    # 图像的路径
+            imgs_suffix = str(img_file).split(".")[-1]  # 图像文件的后缀名
+            rename_file = f"{work_name}_{strdate}_{cnt}.{imgs_suffix}"  # 重命名图像的名称
+            file_rename_path = os.path.join(save_path, rename_file)  # 重命名图像的路径
             try:
-                shutil.move(file_path, file_rename_path)
+                shutil.copy(file_path, file_rename_path)
                 cnt += 1
             except OSError:
                 pass
@@ -46,7 +55,7 @@ if __name__ == "__main__":
 
     dirpath = arg.dir_path
     cnt = arg.cnt
-    work_name = arg.work_file
+    work_name = arg.work_name
     
 
     image_rename(dirpath, cnt, work_name)

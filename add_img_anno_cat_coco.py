@@ -9,11 +9,11 @@ from tqdm import tqdm
 def add_img(old_file, new_file):
     old_coco_data = COCO(old_file)
 
-    with open(old_file, "r", encoding="utf8") as of:
-        old_data = json.load(of)
+    with open(old_file, "r", encoding="utf8") as ofp:
+        old_data = json.load(ofp)
 
-    with open(new_file, "r", encoding="utf8") as nf:
-        new_data = json.load(nf)
+    with open(new_file, "r", encoding="utf8") as nfp:
+        new_data = json.load(nfp)
     
     # 添加新的 图像
     old_images = old_data["images"]
