@@ -45,18 +45,17 @@ def coco2labelme(json_cocofile, imgs_path, save_path, shapeType="rectangle"):
             x1, y1 = bbox[0], bbox[1]
             x2, y2 = bbox[0]+bbox[2], bbox[1]+bbox[3]
             points = [[x1, y1], [x2, y2]]
+            is_modify = anno["is_modify"]
 
             shapes.append({"label": cat_label,
-                        "points": points,
-                        "group_id": None,
-                        "anno_id": anno_id,
-                        "cat_id": cat_id,
-                        "shape_type": shapeType,
-                        "flags": {}})
+                           "is_modify": is_modify,
+                           "points": points,
+                           "group_id": None,
+                           "shape_type": shapeType,
+                           "flags": {}})
         
         labelme_data = {"version": "",
                         "flags": {},
-                        "img_id": img_id,
                         "shapes": shapes,
                         "imagePath": img_name,
                         "imageData": img_encode_data,

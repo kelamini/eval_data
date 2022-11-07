@@ -22,12 +22,9 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
 
 
     # 迭代 yolo 的 txt 文件
-    success = 0
-    img_id = 1
-    anno_id = 1
     img_list = []
     anno_list = []
-    for img_file in tqdm(sorted(os.listdir(img_path))):
+    for img_id, img_file in enumerate(tqdm(sorted(os.listdir(img_path)))):
         txt_file = img_file.replace("jpg", "txt").replace("png", "txt")
         
         imgpath = os.path.join(img_path, img_file)
@@ -43,15 +40,13 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
                          "file_name": img_file})
 
         try:
-            success += 1
             with open(txtpath, "r", encoding="utf8") as fp:
                 # 获取文件内容
                 txtcontent = fp.readlines()
         except:
-            img_id += 1
             continue
 
-        for line in txtcontent:
+        for anno_id, line in enumerate(txtcontent):
             line = line.rstrip("\n").split(" ")
             line = [float(i) for i in line]
             
@@ -71,14 +66,11 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
             anno_list.append({"id": anno_id,
                            "image_id": img_id,
                            "category_id": cat_id,
+                           "is_modify": is_modify,
                            "segmentation": segmentation,
                            "area": area,
                            "bbox": bbox,
                            "iscrowd": 0})
-            
-            anno_id += 1
-        
-        img_id += 1
 
     cocoset = {"info": {},
                 "flags": {},

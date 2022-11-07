@@ -7,6 +7,7 @@ import argparse
 from tqdm import tqdm
 
 
+# 图像编码
 def img_encode_b64(img_path):
     with open(img_path, "rb") as bf:
         img_data = bf.read()
@@ -16,47 +17,44 @@ def img_encode_b64(img_path):
     return base64_str
 
 
+# yolo 的 txt 文件 转 labelme 的 json 文件
 def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectangle"):
+    # 保存路径
     if os.path.exists(save_path):
         shutil.rmtree(save_path)
     os.mkdir(save_path)
 
-    #
+    # 获取 classes.txt 文件内容
     with open(classes_file, "r", encoding="utf-8") as cfp:
         classes = cfp.readlines()
 
-    # 针对 coco 数据集
+    # 保证 cat_id 与 cat_name 对应
     classes_list = [str(i) for i in range(91)]
     for cla in classes:
         cla_id, cla_label = cla.rstrip("\n").split("-")
         cla_id = int(cla_id)
         classes_list[cla_id] = cla_label
 
-    # # 针对自定义数据集
-    # classes_list = []
-    # for cla in classes:
-    #     classes_list.append(cla.rstrip("\n"))
-
-
     # 迭代 yolo 的 txt 文件
-    img_id = 1
     for img_file in tqdm(sorted(os.listdir(img_path))):
         txt_file = img_file.replace("jpg", "txt").replace("png", "txt")
         
-        imgpath = os.path.join(img_path, img_file)
-        txtpath = os.path.join(txt_path, txt_file)
+        imgpath = os.path.join(img_path, img_file)  # img 的路径
+        txtpath = os.path.join(txt_path, txt_file)  # txt 的路径
         # print(f"img_file: {img_file} \t txt_file: {txt_file}")
 
         imgs = Image.open(imgpath)
-        img_w, img_h = imgs.size
-        img_data = img_encode_b64(imgpath)
+        img_w, img_h = imgs.size    # img 的 宽、高
+        # img_id = int(img_file.split(".")[0].split("_")[-1]) # img 的编号
+        img_data = img_encode_b64(imgpath)  # 对 img 编码
         try:
             with open(txtpath, "r", encoding="utf8") as fp:
-                # 获取文件内容
-                txtcontent = fp.readlines()
+                # 获取 txt 文件内容
+                yolo_txt = fp.readlines()
         except:
             jsonset = {"version": "",
                    "flags": {},
+                #    "image_id": img_id,
                    "shapes": [],
                    "imagePath": img_file,
                    "imageData": img_data,
@@ -66,12 +64,12 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
             continue
 
         shapes = []
-        for line in txtcontent:
+        for line in yolo_txt:
             line = line.rstrip("\n").split(" ")
             line = [float(i) for i in line]
             
-            cat_id = int(line[0])
-            cat_label = classes_list[cat_id]
+            cat_id = int(line[0])   # 类别的编号
+            cat_label = classes_list[cat_id]    # 类别的名称
 
             if shapeType == "rectangle":
                 yolo_xc, yolo_yc = line[1], line[2]
@@ -84,15 +82,15 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
                 points = [[x_min, y_min], [x_max, y_max]]
 
             shapes.append({"label": cat_label,
+                           "is_modify": 0,
                            "points": points,
                            "group_id": None,
-                           "cat_id": cat_id,
                            "shape_type": shapeType,
                            "flags": {}})
         
         jsonset = {"version": "",
                    "flags": {},
-                   "img_id": img_id,
+                #    "img_id": img_id,
                    "shapes": shapes,
                    "imagePath": img_file,
                    "imageData": img_data,
@@ -107,8 +105,6 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
 
         with open(savepath, "a", encoding="utf8") as wp:
             json.dump(jsonset, wp, indent=2)
-
-        img_id += 1
 
 
 if __name__ == "__main__":
