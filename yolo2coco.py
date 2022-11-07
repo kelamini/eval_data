@@ -66,7 +66,7 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
             anno_list.append({"id": anno_id,
                            "image_id": img_id,
                            "category_id": cat_id,
-                           "is_modify": is_modify,
+                           "is_modify": 0,
                            "segmentation": segmentation,
                            "area": area,
                            "bbox": bbox,
