@@ -8,22 +8,22 @@ import argparse
 def yolo2coco(txt_path, img_path, classes_file, save_file):
     # 从文件中 获取 类别与类别 ID 的对应关系
     with open(classes_file, "r", encoding="utf-8") as cfp:
-        classes = cfp.readlines()
+        classes_dict = json.load(cfp)
 
     cat_list = []
 
     # 针对 coco 数据集
-    for cla in classes:
-        cla_id, cla_label = cla.rstrip("\n").split("-")
-        cla_id = int(cla_id)
+    for key, value in classes_dict.items():
+        cla_id = int(key)
         cat_list.append({"id": cla_id,
-                          "name": cla_label,
+                          "name": value,
                           "supercategory": ""})
 
 
     # 迭代 yolo 的 txt 文件
     img_list = []
     anno_list = []
+    anno_id = 0
     for img_id, img_file in enumerate(tqdm(sorted(os.listdir(img_path)))):
         txt_file = img_file.replace("jpg", "txt").replace("png", "txt")
         
@@ -46,7 +46,7 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
         except:
             continue
 
-        for anno_id, line in enumerate(txtcontent):
+        for line in txtcontent:
             line = line.rstrip("\n").split(" ")
             line = [float(i) for i in line]
             
@@ -71,7 +71,8 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
                            "area": area,
                            "bbox": bbox,
                            "iscrowd": 0})
-
+            anno_id += 1
+    
     cocoset = {"info": {},
                 "flags": {},
                 "images": img_list,
@@ -84,15 +85,14 @@ def yolo2coco(txt_path, img_path, classes_file, save_file):
 
     with open(save_file, "w", encoding="utf8") as wp:
         json.dump(cocoset, wp, indent=2)
-    print("success:", anno_id)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('-t', '--txt_path', default='yolo_data', type=str, help="")
-    parser.add_argument('-i', '--img_path', default='images', type=str, help="")
-    parser.add_argument('-c', '--classes_file', default='classes.txt', type=str, help="")
+    parser.add_argument('-t', '--txt_path', default='coco2yolo_result', type=str, help="")
+    parser.add_argument('-i', '--img_path', default='/home/kelaboss/datasets/coco/images/val2017', type=str, help="")
+    parser.add_argument('-c', '--classes_file', default='classes_self.json', type=str, help="")
     parser.add_argument('-s', '--save_file', type=str, default='yolo2coco_result.json', help="")
 
     arg = parser.parse_args()
