@@ -45,8 +45,11 @@ def coco2labelme(json_cocofile, imgs_path, save_path, shapeType="rectangle"):
             x1, y1 = bbox[0], bbox[1]
             x2, y2 = bbox[0]+bbox[2], bbox[1]+bbox[3]
             points = [[x1, y1], [x2, y2]]
-            is_modify = anno["is_modify"]
-
+            try:
+                is_modify = anno["is_modify"]
+            except:
+                is_modify = 0
+            
             shapes.append({"label": cat_label,
                            "is_modify": is_modify,
                            "points": points,
@@ -72,9 +75,9 @@ def coco2labelme(json_cocofile, imgs_path, save_path, shapeType="rectangle"):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-j', '--json_file', default='anno_coco.json', type=str,
+    parser.add_argument('-j', '--json_file', default='yolo2coco_result.json', type=str,
                         help="")
-    parser.add_argument('-i', '--imgs_path', type=str, default='images',
+    parser.add_argument('-i', '--imgs_path', type=str, default='/home/kelaboss/datasets/coco/images/val2017',
                         help="")
     parser.add_argument('-s', '--save_path', type=str, default='coco2labelme_result',
                         help="")

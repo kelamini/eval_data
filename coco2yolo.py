@@ -43,7 +43,7 @@ def coco2labelme(json_cocofile, save_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-j', '--json_file', default='anno_coco.json', type=str, help="")
+    parser.add_argument('-j', '--json_file', default='old_coco_data.json', type=str, help="")
     parser.add_argument('-s', '--save_path', type=str, default='coco2yolo_result', help="")
 
     arg = parser.parse_args()

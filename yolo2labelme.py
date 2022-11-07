@@ -26,14 +26,7 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
 
     # 获取 classes.txt 文件内容
     with open(classes_file, "r", encoding="utf-8") as cfp:
-        classes = cfp.readlines()
-
-    # 保证 cat_id 与 cat_name 对应
-    classes_list = [str(i) for i in range(91)]
-    for cla in classes:
-        cla_id, cla_label = cla.rstrip("\n").split("-")
-        cla_id = int(cla_id)
-        classes_list[cla_id] = cla_label
+        classes_dict = json.load(cfp)
 
     # 迭代 yolo 的 txt 文件
     for img_file in tqdm(sorted(os.listdir(img_path))):
@@ -68,8 +61,8 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
             line = line.rstrip("\n").split(" ")
             line = [float(i) for i in line]
             
-            cat_id = int(line[0])   # 类别的编号
-            cat_label = classes_list[cat_id]    # 类别的名称
+            cat_id = str(int(line[0]))   # 类别的编号
+            cat_label = classes_dict[cat_id]    # 类别的名称
 
             if shapeType == "rectangle":
                 yolo_xc, yolo_yc = line[1], line[2]
@@ -110,9 +103,9 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="")
-    parser.add_argument("-t", "--txt_path", type=str, default="yolo_data", help="")
-    parser.add_argument("-c", "--classes_file", type=str, default="classes.txt", help="")
-    parser.add_argument("-i", "--img_path", type=str, default="images", help="")
+    parser.add_argument("-t", "--txt_path", type=str, default="coco2yolo_result", help="")
+    parser.add_argument("-c", "--classes_file", type=str, default="classes_self.json", help="")
+    parser.add_argument("-i", "--img_path", type=str, default="/home/kelaboss/datasets/coco/images/val2017", help="")
     parser.add_argument("-s", "--save_path", type=str, default="yolo2labelme_result", help="")
     parser.add_argument("-st", "--shapeType", type=str, default="rectangle", help="")
 
