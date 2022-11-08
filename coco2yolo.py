@@ -5,7 +5,7 @@ import argparse
 import tqdm
 
 
-def coco2labelme(json_cocofile, save_path):
+def coco2yolo(json_cocofile, save_path):
 
     if os.path.exists(save_path):
         shutil.rmtree(save_path)
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     json_file = arg.json_file
     save_path = arg.save_path
 
-    coco2labelme(json_file, save_path)
+    coco2yolo(json_file, save_path)

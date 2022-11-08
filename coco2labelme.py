@@ -75,7 +75,7 @@ def coco2labelme(json_cocofile, imgs_path, save_path, shapeType="rectangle"):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-j', '--json_file', default='labelme2coco_result.json', type=str,
+    parser.add_argument('-j', '--json_file', default='merge_gt.json', type=str,
                         help="")
     parser.add_argument('-i', '--imgs_path', type=str, default='/home/kelaboss/datasets/coco/images/val2017',
                         help="")
