@@ -75,7 +75,7 @@ def labelme2coco(labelme_path, classes_file, save_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', '--labelme_path', type=str, default='yolo2labelme_result', help="")
+    parser.add_argument('-l', '--labelme_path', type=str, default='coco2labelme_result', help="")
     parser.add_argument('-c', '--classes_file', type=str, default='classes_self.json', help="")
     parser.add_argument('-s', '--save_file', type=str, default='labelme2coco_result.json', help="")
 

@@ -5,6 +5,7 @@ from PIL import Image
 import base64
 import argparse
 from tqdm import tqdm
+from labelme import utils
 
 
 # 图像编码
@@ -36,11 +37,12 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
         txtpath = os.path.join(txt_path, txt_file)  # txt 的路径
         # print(f"img_file: {img_file} \t txt_file: {txt_file}")
 
-        imgs = Image.open(imgpath)
-        img_w, img_h = imgs.size    # img 的 宽、高
-        # img_id = int(img_file.split(".")[0].split("_")[-1]) # img 的编号
-        img_data = img_encode_b64(imgpath)  # 对 img 编码
         try:
+            imgs = Image.open(imgpath)
+            img_w, img_h = imgs.size    # img 的 宽、高
+            # img_id = int(img_file.split(".")[0].split("_")[-1]) # img 的编号
+            img_data = img_encode_b64(imgpath)  # 对 img 编码
+        
             with open(txtpath, "r", encoding="utf8") as fp:
                 # 获取 txt 文件内容
                 yolo_txt = fp.readlines()
@@ -73,6 +75,11 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
                 y_max = (yolo_yc+yolo_h/2)*img_h
                 
                 points = [[x_min, y_min], [x_max, y_max]]
+            
+            if line[5] is not None:
+                group_id = int(line[5])
+            else:
+                group_id = None
 
             shapes.append({"label": cat_label,
                            "is_modify": 0,
@@ -103,9 +110,9 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="")
-    parser.add_argument("-t", "--txt_path", type=str, default="coco2yolo_result", help="")
-    parser.add_argument("-c", "--classes_file", type=str, default="classes_self.json", help="")
-    parser.add_argument("-i", "--img_path", type=str, default="/home/kelaboss/datasets/coco/images/val2017", help="")
+    parser.add_argument("-t", "--txt_path", type=str, default="/home/kelaboss/yolov5-crowdhuman/runs/detect/exp2/labels", help="")
+    parser.add_argument("-c", "--classes_file", type=str, default="classes.json", help="")
+    parser.add_argument("-i", "--img_path", type=str, default="/home/kelaboss/datasets/coco_wider_pedestrian/train", help="")
     parser.add_argument("-s", "--save_path", type=str, default="yolo2labelme_result", help="")
     parser.add_argument("-st", "--shapeType", type=str, default="rectangle", help="")
 
