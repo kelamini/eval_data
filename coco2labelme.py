@@ -46,12 +46,12 @@ def coco2labelme(json_cocofile, imgs_path, save_path, shapeType="rectangle"):
             x2, y2 = bbox[0]+bbox[2], bbox[1]+bbox[3]
             points = [[x1, y1], [x2, y2]]
             try:
-                is_modify = anno["is_modify"]
+                is_verify = anno["is_modify"]
             except:
-                is_modify = 0
+                is_verify = None
             
             shapes.append({"label": cat_label,
-                           "is_modify": is_modify,
+                           "is_verify": is_verify,
                            "points": points,
                            "group_id": None,
                            "shape_type": shapeType,

@@ -76,21 +76,24 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
                 
                 points = [[x_min, y_min], [x_max, y_max]]
             
-            if line[5] is not None:
+            if len(line) > 5:
                 group_id = int(line[5])
             else:
                 group_id = None
+            if len(line) > 6:
+                is_verify = int(line[6])
+            else:
+                is_verify = None
 
             shapes.append({"label": cat_label,
-                           "is_modify": 0,
+                           "is_verify": is_verify,
                            "points": points,
-                           "group_id": None,
+                           "group_id": group_id,
                            "shape_type": shapeType,
                            "flags": {}})
         
         jsonset = {"version": "",
                    "flags": {},
-                #    "img_id": img_id,
                    "shapes": shapes,
                    "imagePath": img_file,
                    "imageData": img_data,
