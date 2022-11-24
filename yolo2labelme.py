@@ -100,8 +100,10 @@ def yolo2labelme(txt_path, classes_file, img_path, save_path, shapeType="rectang
                    "imageHeight": img_h,
                    "imageWidth": img_w}
 
+        # savepath = os.path.join(save_path,
+        #                         txt_file.split(".")[0]+".json")
         savepath = os.path.join(save_path,
-                                txt_file.split(".")[0]+".json")
+                                txt_file.replace("txt", "json"))
 
         if os.path.exists(savepath):
             os.remove(savepath)
